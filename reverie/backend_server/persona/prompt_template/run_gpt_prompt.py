@@ -373,6 +373,10 @@ def run_gpt_prompt_task_decomp(persona,
     for count, i in enumerate(_cr): 
       k = [j.strip() for j in i.split("(duration in minutes:")]
       task = k[0]
+      if task == "":
+        continue
+      if len(k) < 2:
+        continue
       if task[-1] == ".": 
         task = task[:-1]
       duration = int(k[1].split(",")[0].strip())
@@ -426,7 +430,7 @@ def run_gpt_prompt_task_decomp(persona,
     fs = ["asleep"]
     return fs
 
-  gpt_param = {"engine": "text-davinci-003", "max_tokens": 1000, 
+  gpt_param = {"engine": "text-davinci-003", "max_tokens": 4000, 
              "temperature": 0, "top_p": 1, "stream": False,
              "frequency_penalty": 0, "presence_penalty": 0, "stop": None}
   prompt_template = "persona/prompt_template/v2/task_decomp_v3.txt"
@@ -1206,7 +1210,7 @@ def run_gpt_prompt_new_decomp_schedule(persona,
 
     return ret
 
-  gpt_param = {"engine": "text-davinci-003", "max_tokens": 1000, 
+  gpt_param = {"engine": "text-davinci-003", "max_tokens": 4000, 
                "temperature": 0, "top_p": 1, "stream": False,
                "frequency_penalty": 0, "presence_penalty": 0, "stop": None}
   prompt_template = "persona/prompt_template/v2/new_decomp_schedule_v1.txt"

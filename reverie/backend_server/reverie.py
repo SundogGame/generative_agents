@@ -398,7 +398,7 @@ class ReverieServer:
           #  "persona": {"Klaus Mueller": {"movement": [38, 12]}}, 
           #  "meta": {curr_time: <datetime>}}
           curr_move_file = f"{sim_folder}/movement/{self.step}.json"
-          with open(curr_move_file, "w") as outfile: 
+          with open(curr_move_file, "w+", encoding = 'utf-8') as outfile: 
             outfile.write(json.dumps(movements, indent=2))
 
           # After this cycle, the world takes one step forward, and the 
@@ -599,16 +599,16 @@ class ReverieServer:
 
 
 if __name__ == '__main__':
-  # rs = ReverieServer("base_the_ville_isabella_maria_klaus", 
-  #                    "July1_the_ville_isabella_maria_klaus-step-3-1")
+  rs = ReverieServer("base_the_ville_isabella_maria_klaus", 
+                     "July1_the_ville_isabella_maria_klaus-step-3-1" + str(int(random.random() * 1000)))
   # rs = ReverieServer("July1_the_ville_isabella_maria_klaus-step-3-20", 
   #                    "July1_the_ville_isabella_maria_klaus-step-3-21")
   # rs.open_server()
 
-  origin = input("Enter the name of the forked simulation: ").strip()
-  target = input("Enter the name of the new simulation: ").strip()
+  # origin = input("Enter the name of the forked simulation: ").strip()
+  # target = input("Enter the name of the new simulation: ").strip()
 
-  rs = ReverieServer(origin, target)
+  # rs = ReverieServer(origin, target)
   rs.open_server()
 
 

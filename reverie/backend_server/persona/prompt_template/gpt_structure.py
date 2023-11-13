@@ -5,7 +5,6 @@ File: gpt_structure.py
 Description: Wrapper functions for calling OpenAI APIs.
 """
 import json
-import random
 import openai
 import time 
 
@@ -21,7 +20,8 @@ def ChatGPT_single_request(prompt):
 
   completion = openai.ChatCompletion.create(
     model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
+    messages=[{"role": "user", "content": prompt}],
+    api_base=openai_proxy_host
   )
   return completion["choices"][0]["message"]["content"]
 
@@ -47,7 +47,8 @@ def GPT4_request(prompt):
   try: 
     completion = openai.ChatCompletion.create(
     model="gpt-4", 
-    messages=[{"role": "user", "content": prompt}]
+    messages=[{"role": "user", "content": prompt}],
+    api_base=openai_proxy_host
     )
     return completion["choices"][0]["message"]["content"]
   
@@ -72,7 +73,8 @@ def ChatGPT_request(prompt):
   try: 
     completion = openai.ChatCompletion.create(
     model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
+    messages=[{"role": "user", "content": prompt}],
+    api_base=openai_proxy_host
     )
     return completion["choices"][0]["message"]["content"]
   
@@ -210,6 +212,7 @@ def GPT_request(prompt, gpt_parameter):
   try: 
     response = openai.Completion.create(
                 model=gpt_parameter["engine"],
+                api_base=openai_proxy_host,
                 prompt=prompt,
                 temperature=gpt_parameter["temperature"],
                 max_tokens=gpt_parameter["max_tokens"],
@@ -219,9 +222,11 @@ def GPT_request(prompt, gpt_parameter):
                 stream=gpt_parameter["stream"],
                 stop=gpt_parameter["stop"],)
     return response.choices[0].text
-  except: 
-    print ("TOKEN LIMIT EXCEEDED")
-    return "TOKEN LIMIT EXCEEDED"
+  except Exception as e:
+    print(f"GPT_request Exception: {e}")
+    # print ("TOKEN LIMIT EXCEEDED")
+    # return "TOKEN LIMIT EXCEEDED"
+    return e
 
 
 def generate_prompt(curr_input, prompt_lib_file): 
@@ -273,13 +278,27 @@ def safe_generate_response(prompt,
   return fail_safe_response
 
 
-def get_embedding(text, model="text-embedding-ada-002"):
-  text = text.replace("\n", " ")
-  if not text: 
-    text = "this is blank"
-  return openai.Embedding.create(
-          input=[text], model=model)['data'][0]['embedding']
+# def get_embedding(text, model="text-embedding-ada-002"):
+  # text = text.replace("\n", " ")
+  # if not text:
+  #   text = "this is blank"
+  # return openai.Embedding.create(
+  #         input=[text], model=model)['data'][0]['embedding']
 
+
+from sentence_transformers import SentenceTransformer
+def get_embedding(text, model_name="paraphrase-distilroberta-base-v1"):
+  # Initialize the SentenceTransformer model
+  model = SentenceTransformer(model_name)
+
+  text = text.replace("\n", " ")
+  if not text:
+      text = "this is blank"
+
+  # Get the embedding
+  embedding = model.encode(text)
+
+  return embedding
 
 if __name__ == '__main__':
   gpt_parameter = {"engine": "text-davinci-003", "max_tokens": 50, 

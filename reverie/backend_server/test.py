@@ -28,7 +28,8 @@ def ChatGPT_request(prompt):
   try: 
     completion = openai.ChatCompletion.create(
     model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
+    messages=[{"role": "user", "content": prompt}],
+    api_base=openai_proxy_host
     )
     return completion["choices"][0]["message"]["content"]
   
@@ -63,14 +64,5 @@ Example output json:
 
 print (ChatGPT_request(prompt))
 
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+  ChatGPT_request(prompt)
